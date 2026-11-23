@@ -1,0 +1,463 @@
+/**
+ * Sanity Dataset Seeding Script
+ * -----------------------------
+ * Automatically seeds your Sanity dataset with rich, realistic portfolio data!
+ * Run via: npm run seed
+ */
+
+const { createClient } = require('@sanity/client')
+const fs = require('fs')
+const path = require('path')
+
+// Load environment variables from .env.local if present
+const envPath = path.resolve(process.cwd(), '.env.local')
+if (fs.existsSync(envPath)) {
+  const envContent = fs.readFileSync(envPath, 'utf8')
+  envContent.split('\n').forEach((line) => {
+    const trimmed = line.trim()
+    if (trimmed && !trimmed.startsWith('#')) {
+      const [key, ...values] = trimmed.split('=')
+      const value = values.join('=').trim()
+      if (key && value && !process.env[key.trim()]) {
+        process.env[key.trim()] = value
+      }
+    }
+  })
+}
+
+const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID
+const dataset = process.env.NEXT_PUBLIC_SANITY_DATASET || 'production'
+const token = process.env.SANITY_API_TOKEN
+
+console.log('\n======================================================')
+console.log('🚀 GB Portfolio — Sanity CMS Seeding Script')
+console.log('======================================================\n')
+
+if (!projectId || !token) {
+  console.error('❌ Missing Sanity credentials in .env.local!\n')
+  console.log('Please ensure your .env.local contains:')
+  console.log('  1. NEXT_PUBLIC_SANITY_PROJECT_ID=your_project_id')
+  console.log('  2. NEXT_PUBLIC_SANITY_DATASET=production')
+  console.log('  3. SANITY_API_TOKEN=your_editor_or_admin_token\n')
+  console.log('How to get your credentials:')
+  console.log('  • Project ID: https://www.sanity.io/manage')
+  console.log('  • API Token: Project -> Settings -> API -> Add API Token (Editor permissions)\n')
+  console.log('Note: Until you set these up, your website already works out-of-the-box')
+  console.log('with built-in rich mock data! No rush.\n')
+  process.exit(1)
+}
+
+const client = createClient({
+  projectId,
+  dataset,
+  apiVersion: '2024-03-01',
+  token,
+  useCdn: false,
+})
+
+const documents = [
+  // 1. Site Settings
+  {
+    _id: 'siteSettings',
+    _type: 'siteSettings',
+    brandName: 'GB.',
+    siteTitle: 'Gihan Bhathi — Design Engineer & Creative Technologist',
+    announcementBadge: 'Available for Freelance & New Projects ->',
+    announcementBadgeLink: '/contact',
+    heroHeadline: 'Crafting digital products with precision, code & soul.',
+    heroBio:
+      'I am a design engineer blending modern front-end craftsmanship with clean aesthetics. Specializing in high-performance web applications, interactive design systems, and thoughtful digital experiences.',
+    primaryCtaText: 'View My Work',
+    primaryCtaLink: '/work',
+    secondaryCtaText: 'Contact Me',
+    secondaryCtaLink: '/contact',
+    socialLinks: [
+      { _key: 'soc-1', platform: 'GitHub', url: 'https://github.com', handle: 'github.com/gbhathi' },
+      { _key: 'soc-2', platform: 'LinkedIn', url: 'https://linkedin.com', handle: 'linkedin.com/in/gihan-bhathi' },
+      { _key: 'soc-3', platform: 'X / Twitter', url: 'https://x.com', handle: '@gihanbhathi' },
+      { _key: 'soc-4', platform: 'Dribbble', url: 'https://dribbble.com', handle: 'dribbble.com/gbhathi' },
+    ],
+  },
+
+  // 2. About Me
+  {
+    _id: 'about',
+    _type: 'about',
+    headline: 'Merging engineering rigor with timeless, human-centered design.',
+    shortBio:
+      'With over 6 years of experience building modern web products, I live at the intersection of design, code, and user empathy.',
+    story: [
+      'My journey began with an obsession for how things feel on screen. Early on, I realized the most memorable software isn\'t just visually striking or technically complex—it is the subtle synergy between both. When motion is fluid, typography is intentional, and response times are instantaneous, software feels like an extension of thought.',
+      'Over the past six years, I have collaborated with venture-backed startups and established engineering teams to architect scalable front-end systems, establish comprehensive design tokens, and launch products used by tens of thousands of active users every day.',
+      'Today, I operate as an independent Design Engineer & Creative Technologist. I partner directly with founders, product leaders, and design teams to turn ambitious visions into robust, production-ready web applications.',
+    ],
+    stats: [
+      { _key: 'stat-1', value: '06+', label: 'Years of Experience' },
+      { _key: 'stat-2', value: '40+', label: 'Delivered Web Projects' },
+      { _key: 'stat-3', value: '99.8%', label: 'Client Satisfaction' },
+      { _key: 'stat-4', value: '<40ms', label: 'Target Micro-Latency' },
+    ],
+    skillCategories: [
+      {
+        _key: 'sk-1',
+        category: 'Design & Craft',
+        skills: [
+          'Design Systems',
+          'Figma Master Components',
+          'Micro-Interactions',
+          'Geometric Typography',
+          'Interactive Prototyping',
+          'Design Tokens',
+          'Accessibility (WCAG AAA)',
+        ],
+      },
+      {
+        _key: 'sk-2',
+        category: 'Frontend Engineering',
+        skills: [
+          'React & Next.js (App Router)',
+          'TypeScript',
+          'Tailwind CSS',
+          'HTML5 Canvas & 2D Physics',
+          'State Management & Zustand',
+          'Responsive Architecture',
+          'Web Vitals Optimization',
+        ],
+      },
+      {
+        _key: 'sk-3',
+        category: 'Content & Backend',
+        skills: [
+          'Sanity Headless CMS',
+          'GROQ & GraphQL',
+          'Node.js & Edge Runtimes',
+          'RESTful APIs & Webhooks',
+          'PostgreSQL & Supabase',
+          'Vercel Deployment',
+        ],
+      },
+      {
+        _key: 'sk-4',
+        category: 'Workflow & Tooling',
+        skills: [
+          'Git & Modern Version Control',
+          'Storybook Component Isolation',
+          'Automated CI/CD Workflows',
+          'Unit & E2E Testing',
+          'Performance Profiling',
+          'Agile Sprint Delivery',
+        ],
+      },
+    ],
+    workflow: [
+      {
+        _key: 'wf-1',
+        step: '01',
+        title: 'Discovery & Architectural Blueprint',
+        description:
+          'Every successful project starts with clarity. We dissect user personas, product goals, brand aesthetics, and technical constraints to establish a bulletproof roadmap.',
+      },
+      {
+        _key: 'wf-2',
+        step: '02',
+        title: 'High-Fidelity Design & Interaction Prototype',
+        description:
+          'Translating ideas into crisp layouts in Figma with exact typography scales, responsive grids, and interactive prototypes that validate every gesture before writing code.',
+      },
+      {
+        _key: 'wf-3',
+        step: '03',
+        title: 'Clean Modular Development',
+        description:
+          'Engineering your application with typed components, atomic design standards, and seamless Sanity CMS integration, ensuring peak rendering speeds and intuitive editorial control.',
+      },
+      {
+        _key: 'wf-4',
+        step: '04',
+        title: 'Polish, Audit & Zero-Downtime Launch',
+        description:
+          'Deep performance profiling, 100/100 Lighthouse audits, cross-browser stress testing, SEO optimization, and smooth deployment to production edge networks.',
+      },
+    ],
+  },
+
+  // 3. Education Entries
+  {
+    _id: 'edu-1',
+    _type: 'education',
+    degree: 'Bachelor of Science in Computer Science & Interaction',
+    institution: 'University of Technology & Applied Sciences',
+    location: 'California, USA',
+    period: '2018 - 2022',
+    type: 'degree',
+    badgeLabel: 'First Class Honours (GPA 3.92/4.0)',
+    description:
+      'Comprehensive curriculum focused on algorithms, software architecture, human-computer interaction, visual interface design, and distributed systems. Recipient of the Annual Dean’s Award for Outstanding Technical Capstone.',
+    skillsLearned: [
+      'Human-Computer Interaction',
+      'Software Systems Design',
+      'Computer Graphics & Canvas',
+      'Object-Oriented Design',
+      'Data Structures & Algorithms',
+    ],
+    credentialUrl: 'https://university.example.edu',
+    order: 1,
+  },
+  {
+    _id: 'edu-2',
+    _type: 'education',
+    degree: 'Advanced Design Systems & Micro-Interactions Mastery',
+    institution: 'Interaction Design Institute',
+    location: 'Online / San Francisco',
+    period: '2023',
+    type: 'certification',
+    badgeLabel: 'Top 2% Distinction',
+    description:
+      'Specialized training in building enterprise-grade multi-brand design tokens, fluid CSS/Canvas physics animations, and accessibility-first web components that meet strict WCAG AAA guidelines.',
+    skillsLearned: [
+      'Design Token Pipelines',
+      'Subtle Physics & Spring Animations',
+      'WCAG 2.2 AAA Accessibility',
+      'Component Library Architecture',
+    ],
+    credentialUrl: 'https://certificate.example.com/ds-mastery',
+    order: 2,
+  },
+  {
+    _id: 'edu-3',
+    _type: 'education',
+    degree: 'Sanity CMS Certified Content Engineer',
+    institution: 'Sanity.io Official Certification',
+    location: 'Global Remote',
+    period: '2024',
+    type: 'certification',
+    badgeLabel: 'Official Certified',
+    description:
+      'Deep validation of schema modeling, GROQ query optimization, real-time live preview setups, embedded Sanity Studio custom tools, and automated content migration pipelines.',
+    skillsLearned: [
+      'Headless Content Modeling',
+      'Advanced GROQ Queries',
+      'Sanity Studio Customization',
+      'Live Visual Editing & Draft Mode',
+    ],
+    credentialUrl: 'https://sanity.io/certificates/example',
+    order: 3,
+  },
+  {
+    _id: 'edu-4',
+    _type: 'education',
+    degree: 'Next.js & Modern Web Architecture Specialization',
+    institution: 'Frontend Masters & Vercel Academy',
+    location: 'Remote Cohort',
+    period: '2023 - 2024',
+    type: 'course',
+    badgeLabel: 'Excellence Certificate',
+    description:
+      'In-depth exploration of App Router server components, streaming SSR, edge caching strategies, dynamic OG image generation, and modern front-end performance profiling.',
+    skillsLearned: [
+      'React Server Components (RSC)',
+      'Next.js App Router Architecture',
+      'Edge Middleware & CDN Caching',
+      'Core Web Vitals Optimization',
+    ],
+    credentialUrl: 'https://frontendmasters.com/certificates/example',
+    order: 4,
+  },
+
+  // 4. Projects (6 Realistic Portfolio Projects)
+  {
+    _id: 'proj-1',
+    _type: 'project',
+    title: 'Chronicle Design System',
+    slug: { _type: 'slug', current: 'chronicle-design-system' },
+    category: 'Design System',
+    featured: true,
+    excerpt:
+      'A clean, modular design language and accessible React component library built for rapid cross-functional product development.',
+    fullDescription:
+      'Chronicle is a production-tested design system engineered to bridge the gap between Figma design files and React engineering workflows. It provides over 80 atomic components, automated token synchronizers, and comprehensive documentation. Built with zero-runtime CSS variables, strict TypeScript types, and full keyboard navigation support.',
+    mainImageUrl:
+      'https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?auto=format&fit=crop&w=1200&q=85',
+    technologies: ['React', 'TypeScript', 'Tailwind CSS', 'Figma Tokens', 'Storybook', 'Radix UI'],
+    deliverables: [
+      '80+ Production Components',
+      'Automated Design Token Sync',
+      'Interactive Documentation Portal',
+      'WCAG AAA Keyboard Navigation',
+    ],
+    client: 'Aether Cloud Systems',
+    year: '2024',
+    liveUrl: 'https://example.com/chronicle',
+    githubUrl: 'https://github.com/example/chronicle-system',
+    order: 1,
+  },
+  {
+    _id: 'proj-2',
+    _type: 'project',
+    title: 'Apex Telemetry & Analytics Dashboard',
+    slug: { _type: 'slug', current: 'apex-telemetry-dashboard' },
+    category: 'Web App',
+    featured: true,
+    excerpt:
+      'High-throughput developer metrics dashboard featuring real-time event streaming and customizable visual widget canvases.',
+    fullDescription:
+      'Apex is an ultra-fast developer observability console created for monitoring cloud infrastructure and microservices. Featuring smooth Canvas-based time-series charts, modular grid layouts, and sub-50ms query responses. Connected directly to Sanity CMS for editorial release notes and feature flags.',
+    mainImageUrl:
+      'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1200&q=85',
+    technologies: ['Next.js', 'TypeScript', 'Canvas API', 'Tailwind CSS', 'Sanity CMS', 'Zustand'],
+    deliverables: [
+      'Real-time WebSocket Ingestion',
+      'Custom 60fps Canvas Chart Engine',
+      'Draggable Widget Grid Architecture',
+      'Role-Based Access Control',
+    ],
+    client: 'Apex Observability Inc',
+    year: '2024',
+    liveUrl: 'https://example.com/apex',
+    githubUrl: 'https://github.com/example/apex-telemetry',
+    order: 2,
+  },
+  {
+    _id: 'proj-3',
+    _type: 'project',
+    title: 'Prism AI Studio & Prompt Lab',
+    slug: { _type: 'slug', current: 'prism-ai-studio' },
+    category: 'Mobile & AI',
+    featured: true,
+    excerpt:
+      'Interactive generative playground and prompt asset curator built for digital artists and creative directors.',
+    fullDescription:
+      'Prism empowers creative teams to synthesize, compare, and organize generative AI visual experiments in one unified workspace. Includes side-by-side prompt diffing, high-resolution canvas zoom inspectors, tag clustering, and instant export pipelines to production media repositories.',
+    mainImageUrl:
+      'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1200&q=85',
+    technologies: ['React', 'Next.js', 'Tailwind CSS', 'TypeScript', 'Web Workers', 'Sanity CMS'],
+    deliverables: [
+      'Prompt Diff & History Engine',
+      'High-Res Zoom & Compare Canvas',
+      'Tag Cluster Search System',
+      'Mobile Responsive Touch Experience',
+    ],
+    client: 'Prism Creative Labs',
+    year: '2023',
+    liveUrl: 'https://example.com/prism',
+    githubUrl: 'https://github.com/example/prism-studio',
+    order: 3,
+  },
+  {
+    _id: 'proj-4',
+    _type: 'project',
+    title: 'Solfeggio Soundscapes',
+    slug: { _type: 'slug', current: 'solfeggio-soundscapes' },
+    category: 'Creative Tech',
+    featured: false,
+    excerpt:
+      'Interactive audio-visual frequency synthesizer utilizing Web Audio synthesis and particle canvas dynamics.',
+    fullDescription:
+      'An exploratory web experience exploring resonant harmonics, visual mathematics, and binaural audio. Solfeggio generates soothing real-time soundscapes based on natural frequencies while projecting responsive particle waves on a customized HTML5 canvas engine.',
+    mainImageUrl:
+      'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=1200&q=85',
+    technologies: ['Web Audio API', 'HTML5 Canvas', 'TypeScript', 'Next.js', 'Tailwind CSS'],
+    deliverables: [
+      'Polyphonic Web Audio Synthesizer',
+      'Responsive Particle Wave Physics',
+      'Custom Preset Preset Manager',
+      'Zero-Latency Audio Worklet Engine',
+    ],
+    client: 'Independent Creative Project',
+    year: '2023',
+    liveUrl: 'https://example.com/solfeggio',
+    githubUrl: 'https://github.com/example/solfeggio',
+    order: 4,
+  },
+  {
+    _id: 'proj-5',
+    _type: 'project',
+    title: 'Monolith Editorial Commerce',
+    slug: { _type: 'slug', current: 'monolith-editorial-commerce' },
+    category: 'SaaS Platform',
+    featured: true,
+    excerpt:
+      'Headless luxury lifestyle storefront integrating editorial storytelling with instant cart transitions and Sanity CMS.',
+    fullDescription:
+      'Monolith blends magazine-style digital editorial design with a performant e-commerce backend. Built using Next.js App Router and Sanity CMS, the platform delivers instantaneous page transitions, localized currencies, dynamic lookbooks, and an intuitive custom studio editor.',
+    mainImageUrl:
+      'https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=1200&q=85',
+    technologies: ['Next.js', 'Sanity CMS', 'Tailwind CSS', 'TypeScript', 'Stripe API', 'Edge Middleware'],
+    deliverables: [
+      'Dynamic Editorial Lookbook Modules',
+      'Sub-100ms Page Navigation',
+      'Optimistic Cart Drawer System',
+      'Sanity Studio Content Authoring Suite',
+    ],
+    client: 'Monolith Brands Group',
+    year: '2024',
+    liveUrl: 'https://example.com/monolith',
+    githubUrl: 'https://github.com/example/monolith-commerce',
+    order: 5,
+  },
+  {
+    _id: 'proj-6',
+    _type: 'project',
+    title: 'Verve Orbital Celestial Explorer',
+    slug: { _type: 'slug', current: 'verve-orbital-explorer' },
+    category: 'Creative Tech',
+    featured: false,
+    excerpt:
+      '3D educational astrophysics simulator allowing students and stargazers to trace planetary orbits in real time.',
+    fullDescription:
+      'Built in collaboration with science educators, Verve brings planetary physics to the browser. Users can adjust gravitational constants, inspect planetary textures, view historical celestial events, and inspect key data points inside an intuitive modal drawer.',
+    mainImageUrl:
+      'https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=1200&q=85',
+    technologies: ['HTML5 Canvas', 'WebGL', 'TypeScript', 'Next.js', 'Tailwind CSS'],
+    deliverables: [
+      'Gravitational Keplerian Orbit Physics',
+      'Interactive Planet Inspector Modal',
+      'Time Scrubbing Simulation Controls',
+      'Accessible Audio Narration Guide',
+    ],
+    client: 'Cosmos Education Foundation',
+    year: '2023',
+    liveUrl: 'https://example.com/verve',
+    githubUrl: 'https://github.com/example/verve-explorer',
+    order: 6,
+  },
+
+  // 5. Contact Details
+  {
+    _id: 'contact',
+    _type: 'contact',
+    email: 'hello@gihanbhathi.dev',
+    phone: '+1 (555) 382-9014',
+    location: 'San Francisco, CA & Remote Worldwide',
+    timezone: 'PST (UTC-8) / Flexible Global Overlap',
+    availabilityNotice:
+      'Currently open for Q1/Q2 freelance design engineering contracts, design system consultations, and select full-time roles.',
+    responseTime: 'Guaranteed personal response within 24 hours.',
+    socialLinks: [
+      { _key: 'con-1', platform: 'GitHub', url: 'https://github.com', handle: 'github.com/gbhathi' },
+      { _key: 'con-2', platform: 'LinkedIn', url: 'https://linkedin.com', handle: 'linkedin.com/in/gihan-bhathi' },
+      { _key: 'con-3', platform: 'X / Twitter', url: 'https://x.com', handle: '@gihanbhathi' },
+      { _key: 'con-4', platform: 'Dribbble', url: 'https://dribbble.com', handle: 'dribbble.com/gbhathi' },
+    ],
+  },
+]
+
+async function seed() {
+  console.log(`Connecting to Sanity project: ${projectId} (dataset: ${dataset})...\n`)
+
+  const transaction = client.transaction()
+  for (const doc of documents) {
+    console.log(` -> Staging [${doc._type}]: ${doc.title || doc.brandName || doc.headline || doc.degree || doc.email}`)
+    transaction.createOrReplace(doc)
+  }
+
+  console.log('\nCommitting transaction to Sanity...')
+  await transaction.commit()
+  console.log('\n✅ SUCCESS! All portfolio documents seeded to your Sanity dataset.')
+  console.log('You can now open http://localhost:3000/studio to see and edit your live content.\n')
+}
+
+seed().catch((err) => {
+  console.error('\n❌ Seeding failed:', err.message)
+  process.exit(1)
+})
