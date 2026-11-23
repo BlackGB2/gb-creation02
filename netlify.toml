@@ -1,0 +1,4 @@
+[build]
+  # Install dependencies if the environment hasn't already, then build.
+  command = "[ -x node_modules/.bin/next ] || npm ci; npm run build"
+  publish = ".next"
